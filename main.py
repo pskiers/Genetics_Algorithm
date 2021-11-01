@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 
 def main():
     pop_size = int(input("Enter population size: "))
-    mutation_probability = float(input("Enter mutation probability: "))
-    crossing_probability = float(input("Enter crossing probability: "))
+    mutation_prob = float(input("Enter mutation probability: "))
+    crossing_prob = float(input("Enter crossing probability: "))
     max_iterarions = int(input("Enter number of iterations: "))
     population = []
     coin = [True, False]
@@ -19,13 +19,20 @@ def main():
             drawn = random.choice(coin)
             individual[j] = drawn
         population.append(individual)
-    best_x, best_ev, history = hollands_algorithm(target_function,
-                                                  population,
-                                                  pop_size,
-                                                  mutation_probability,
-                                                  crossing_probability,
-                                                  max_iterarions)
+    best_x, best_ev, history, history_ev = hollands_algorithm(target_function,
+                                                              population,
+                                                              pop_size,
+                                                              mutation_prob,
+                                                              crossing_prob,
+                                                              max_iterarions)
     print('Best found x = ', decode(best_x), "\n Best evaluation = ", best_ev)
+
+    keys = []
+    for i in range(max_iterarions):
+        for j in range(pop_size):
+            keys.append(i*pop_size*6/5+j)
+    plt.plot(keys, history_ev)
+    plt.show()
 
     to_show = [0,
                max_iterarions//7,

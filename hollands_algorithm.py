@@ -77,6 +77,7 @@ def hollands_algorithm(target_function,
                        crossing_probability,
                        max_iterations):
     history = []
+    history_ev = []
     iteration = 0
     evaluations = evaluate(target_function, population)
     best_x, best_ev = find_best(population, evaluations)
@@ -85,6 +86,7 @@ def hollands_algorithm(target_function,
         crossed_and_mutated = cross_and_mutate(reproduced,
                                                mutation_probability,
                                                crossing_probability)
+        history_ev.extend(evaluations)
         evaluations = evaluate(target_function, crossed_and_mutated)
         new_best_x, new_best_ev = find_best(crossed_and_mutated, evaluations)
         if new_best_ev <= best_ev:
@@ -95,4 +97,4 @@ def hollands_algorithm(target_function,
         iteration += 1
         if iteration % 1000 == 0:
             print('Current generation: ', iteration)
-    return best_x, best_ev, history
+    return best_x, best_ev, history, history_ev
