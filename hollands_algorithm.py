@@ -1,6 +1,5 @@
 import random
 import numpy
-
 from target_function import decode
 
 
