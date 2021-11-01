@@ -27,16 +27,6 @@ def main():
                                                   max_iterarions)
     print('Best found x = ', decode(best_x), "\n Best evaluation = ", best_ev)
 
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111, projection='3d')
-    # x = [x[0] for x in history]
-    # y = [x[1] for x in history]
-    # z = [x[2] for x in history]
-    # c = [x[3] for x in history]
-    # img = ax.scatter(x, y, z, c=c, cmap=plt.hot())
-    # fig.colorbar(img)
-    # plt.show()
-
     to_show = [0,
                max_iterarions//7,
                2*max_iterarions//7,
