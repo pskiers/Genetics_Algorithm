@@ -31,7 +31,12 @@ def main():
     for i in range(max_iterarions):
         for j in range(pop_size):
             keys.append(i*pop_size*6/5+j)
-    plt.plot(keys, history_ev)
+    plt.plot(keys, history_ev, markersize=1, marker='.', linewidth=0)
+    plt.show()
+
+    keys = range(max_iterarions)
+    values = [sum(history_ev[(pop_size*n):(pop_size*(n+1))]) for n in keys]
+    plt.plot(keys, values)
     plt.show()
 
     to_show = [0,
