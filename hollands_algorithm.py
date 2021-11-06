@@ -16,13 +16,11 @@ def find_best(population, evaluations):
 
 
 def reproduction(population, evaluations, population_size):
-    norm = min(evaluations) + 1
+    negative_ev = [-evaluation for evaluation in evaluations]
+    norm = min(negative_ev) - 1
     if norm > 0:
         norm = 0
-    normed_ev = [evaluation - norm for evaluation in evaluations]
-    legend = [(population[i], normed_ev[i]) for i in range(len(population))]
-    legend = sorted(legend, key=lambda x: x[1], reverse=True)
-    normed_ev = sorted(normed_ev)
+    normed_ev = [evaluation - norm for evaluation in negative_ev]
     ev_sum = sum(normed_ev)
     new_popuulation = []
     while len(new_popuulation) < population_size:
@@ -31,17 +29,21 @@ def reproduction(population, evaluations, population_size):
         while drawn > 0:
             drawn -= normed_ev[i]
             i += 1
-        new_popuulation.append(legend[i-1][0])
+        new_popuulation.append(population[i-1])
     return new_popuulation
 
 
 def cross_and_mutate(reproduced, mutation_probability, crossing_probability):
     crossed = []
     if len(reproduced) % 2 == 1:
-        crossed.append(random.choice(reproduced))
+        chosen = random.randint(0, len(reproduced)-1)
+        crossed.append(reproduced[chosen])
+        reproduced.pop(chosen)
     for _ in range(len(reproduced)//2):
-        parent1 = random.choice(reproduced)
-        parent2 = random.choice(reproduced)
+        chosen1 = random.randint(0, len(reproduced)-1)
+        parent1 = reproduced.pop(chosen1)
+        chosen2 = random.randint(0, len(reproduced)-1)
+        parent2 = reproduced.pop(chosen2)
         drawn = random.random()
         if drawn < crossing_probability:
             genom_lenght = len(parent1)
@@ -59,6 +61,7 @@ def cross_and_mutate(reproduced, mutation_probability, crossing_probability):
         else:
             crossed.append(parent1)
             crossed.append(parent2)
+
     for i in range(len(crossed)):
         for j in range(len(crossed[i])):
             drawn = random.random()

@@ -4,6 +4,7 @@ from target_function import target_function, decode
 import numpy
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+from math import sqrt
 
 
 def main():
@@ -11,53 +12,53 @@ def main():
     mutation_prob = float(input("Enter mutation probability: "))
     crossing_prob = float(input("Enter crossing probability: "))
     max_iterarions = int(input("Enter number of iterations: "))
-    population = []
     coin = [True, False]
-    for i in range(pop_size):
-        individual = numpy.zeros(20)
-        for j in range(20):
-            drawn = random.choice(coin)
-            individual[j] = drawn
-        population.append(individual)
-    best_x, best_ev, history, history_ev = hollands_algorithm(target_function,
-                                                              population,
-                                                              pop_size,
-                                                              mutation_prob,
-                                                              crossing_prob,
-                                                              max_iterarions)
-    print('Best found x = ', decode(best_x), "\n Best evaluation = ", best_ev)
-
     keys = []
-    for i in range(max_iterarions):
-        for j in range(pop_size):
-            keys.append(i*pop_size*6/5+j)
-    plt.plot(keys, history_ev, markersize=1, marker='.', linewidth=0)
+    history = []
+    best_points = {}
+    for _ in range(25):
+        population = []
+        for i in range(pop_size):
+            individual = numpy.zeros(20)
+            for j in range(20):
+                drawn = random.choice(coin)
+                individual[j] = drawn
+            population.append(individual)
+        best_x, best_ev, hist, history_ev = hollands_algorithm(target_function,
+                                                               population,
+                                                               pop_size,
+                                                               mutation_prob,
+                                                               crossing_prob,
+                                                               max_iterarions)
+        best_points[best_ev] = decode(best_x)
+        history.extend(history_ev)
+        keys.extend(range(len(history_ev)))
+
+    b_evaluation = min(best_points.keys())
+    print('Best found x = ', best_points[b_evaluation], "Best evaluation = ", b_evaluation)
+
+    plt.plot(keys, history, markersize=1, marker='.', linewidth=0)
     plt.show()
 
     keys = range(max_iterarions)
-    values = [sum(history_ev[(pop_size*n):(pop_size*(n+1))]) for n in keys]
-    plt.plot(keys, values)
+    values = [history[(pop_size*n):(pop_size*(n+1))] for n in range(max_iterarions*25)]
+    val = []
+    for i in range(max_iterarions):
+        val.append(values[i])
+        for j in range(1, 24):
+            val[i].extend(values[i + j * max_iterarions])
+    mean = [sum(i) for i in val]
+    plt.plot(keys, mean)
     plt.show()
 
-    to_show = [0,
-               max_iterarions//7,
-               2*max_iterarions//7,
-               3*max_iterarions//7,
-               4*max_iterarions//7,
-               5*max_iterarions//7,
-               6*max_iterarions//7,
-               max_iterarions-1]
-    for n in to_show:
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-        x = [x[0] for x in history[(pop_size*n):(pop_size*(n+1))]]
-        y = [x[1] for x in history[(pop_size*n):(pop_size*(n+1))]]
-        z = [x[2] for x in history[(pop_size*n):(pop_size*(n+1))]]
-        c = [x[3] for x in history[(pop_size*n):(pop_size*(n+1))]]
-        img = ax.scatter(x, y, z, c=c, cmap=plt.hot())
-        fig.colorbar(img)
-        plt.show()
-
+    var = []
+    for i in range(max_iterarions):
+        var.append(0)
+        for point in val[i]:
+            var[i] += (point - mean[i])**2
+    sigma = [sqrt(v/(pop_size*25)) for v in var]
+    plt.plot(keys, sigma)
+    plt.show()
 
 if __name__ == "__main__":
     main()
